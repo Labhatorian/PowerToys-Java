@@ -1,21 +1,17 @@
 # Security Policy
 
 ## Supported Versions
-
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
-
 | Version | Supported          |
 | ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+| x.x.x   | :x: Currently in Pre-Alpha|
+
 
 ## Reporting a Vulnerability
+If you find a vulnerability in the program follow these steps:
+1. Go to https://github.com/Labhatorian/PowerToys/issues
+2. Create a new issue
+3. Give it the tag `Security`
+4. Use the template for security related issues
 
-Use this section to tell people how to report a vulnerability.
-
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+A developer will check it out as soon as possible and start the issue process.
+If it gets declined, you can expect a response why.
