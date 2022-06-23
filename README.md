@@ -1,5 +1,6 @@
 # PowerToys
-> Java application with tools to help with specific tasks<br>
+> Java application with tools to help with specific tasks
+
 Currently in Pre-Alpha Private. Heading to milestone **1.0**!
 
 ## Features to be created
