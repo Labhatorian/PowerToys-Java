@@ -3,12 +3,18 @@
  */
 package powertoys;
 
+import javax.swing.JFrame;
+
 public class App {
+    private static JFrame MainWindow;
+
     public String getGreeting() {
         return "Hello World!";
     }
 
     public static void main(String[] args) {
         System.out.println(new App().getGreeting());
+        MainWindow = new JFrame();
+        MainWindow.setVisible(true);
     }
 }

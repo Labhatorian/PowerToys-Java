@@ -1,0 +1,16 @@
+{
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "debug.javascript.defaultRuntimeExecutable": {
+
+        "pwa-node": "node"
+    },
+    "java.test.config": {
+    
+    },
+    "launch": {
+        
+
+        "configurations": [],
+        "compounds": []
+    }
+}
