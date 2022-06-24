@@ -4,17 +4,25 @@
 package powertoys;
 
 import javax.swing.JFrame;
+import java.awt.*;
 
 public class App {
-    private static JFrame MainWindow;
 
     public String getGreeting() {
         return "Hello World!";
     }
 
     public static void main(String[] args) {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double width = screenSize.getWidth();
+        double height = screenSize.getHeight();
+
         System.out.println(new App().getGreeting());
-        MainWindow = new JFrame();
-        MainWindow.setVisible(true);
+        JFrame mainWindow = new JFrame();
+        mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainWindow.setSize(500, 300);
+        //MainWindow.setLocation(Math.toIntExact(Math.round(height))-100,Math.toIntExact(Math.round(width))-100 );
+        mainWindow.setLocation(100,100 );
+        mainWindow.setVisible(true);
     }
 }
