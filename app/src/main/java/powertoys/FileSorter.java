@@ -16,6 +16,7 @@ public class FileSorter extends JPanel implements ActionListener {
         setLayout(new FlowLayout());
         add(returnButton);
         returnButton.addActionListener(this);
+        app.setTitle("PowerToys - FileSorter");
 
         setVisible(true);
     }

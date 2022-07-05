@@ -24,7 +24,10 @@ public class MainWindow extends JPanel implements ActionListener {
             add(fileSorterButton);
             fileSorterButton.addActionListener(this);
             add(randomFileChooserButton);
+            randomFileChooserButton.addActionListener(this);
             add(fileUnsorterButton);
+            fileUnsorterButton.addActionListener(this);
+            app.setTitle("PowerToys");
 
             setVisible(true);
         }
@@ -34,10 +37,18 @@ public class MainWindow extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource() == fileSorterButton) {
             FileSorter fileSorter = new FileSorter(app);
-            app.remove(this);
-            app.add(fileSorter);
-            app.revalidate();
-            app.repaint();
+            movePanels(fileSorter);
         }
+
+        if (actionEvent.getSource() == randomFileChooserButton || actionEvent.getSource() == fileUnsorterButton) {
+            JOptionPane.showMessageDialog(app, "Currently not implemented", "Powertoys: Hold up!", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    public void movePanels(Object object){
+        app.remove(this);
+        app.add((Component) object);
+        app.revalidate();
+        app.repaint();
     }
 }
