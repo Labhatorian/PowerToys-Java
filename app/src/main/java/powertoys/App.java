@@ -3,28 +3,26 @@
  */
 package powertoys;
 
-import javax.swing.JFrame;
+import com.sun.tools.javac.Main;
+
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class App {
     public static void main(String[] args) {
-        //TODO Give own class
         //TODO Add menubar with license and link to pag
-        JFrame mainWindow = new JFrame();
-        Button fileSorterButton = new Button("File Sorter");
-        Button randomFileChooserButton = new Button("Random File Chooser");
-        Button fileUnsorterButton = new Button("File Unsorter");
+        JFrame window = new JFrame();
+        window.setTitle("PowerToys");
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setSize(500, 300);
+        window.setLocation(100, 100);
 
-        mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainWindow.setSize(500, 300);
-        mainWindow.setLocation(100, 100);
-        mainWindow.setLayout(new FlowLayout());
-        mainWindow.setTitle("PowerToys");
+        MainWindow MainWindow = new MainWindow(window);
+        window.add(MainWindow);
 
-        mainWindow.add(fileSorterButton);
-        mainWindow.add(randomFileChooserButton);
-        mainWindow.add(fileUnsorterButton);
-
-        mainWindow.setVisible(true);
+        window.setVisible(true);
     }
+
 }
