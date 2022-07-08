@@ -69,7 +69,7 @@ public class App {
                 KeyEvent.VK_F2, 0));
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
-               InfoDialog ID = new InfoDialog();
+               InfoDialog ID = new InfoDialog(window);
             }
         });
         menu.add(menuItem);
