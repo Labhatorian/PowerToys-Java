@@ -1,7 +1,7 @@
 # PowerToys
 > Java application with tools to help with specific tasks
 
-Currently in Pre-Alpha Private. Heading to milestone **1.0**!
+Currently in Alpha and private repository. Heading for milestone **1.0**!
 
 ## Features to be created
 - [ ] #1 File sorter based on filename
