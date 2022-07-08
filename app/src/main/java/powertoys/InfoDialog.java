@@ -17,6 +17,8 @@ public class InfoDialog extends JDialog {
     private Dimension dimPane = new Dimension(650,300);
     JTextPane pane = new JTextPane();
     JScrollPane scrollPane = new JScrollPane(pane);
+    private boolean holdUp = false;
+    private boolean itWasntMe = false;
     public InfoDialog(JFrame parent) {
         //TODO Get version from somewhere
         setTitle("PowerToys Beta 1.0");
@@ -67,8 +69,6 @@ public class InfoDialog extends JDialog {
         StyleConstants.setAlignment(centerAttribute, StyleConstants.ALIGN_CENTER);
         doc.setParagraphAttributes(0, doc.getLength(), centerAttribute, false);
         //
-
-
         pane.setCaretPosition(0); // Start at top when opening dialog
 
         add(title);
@@ -77,31 +77,50 @@ public class InfoDialog extends JDialog {
 
         setVisible(true);
 
+        //Prepare moving scrollbar and thread for it
         scrollPane.getViewport().addChangeListener(new ListenAdditionsScrolled());
+        movePane movePane = new movePane();
+        movePane.start();
     }
     public class ListenAdditionsScrolled implements ChangeListener{
         public void stateChanged(ChangeEvent e){
-            scrollPane.revalidate();
-            repaint();
-            try {
-                TimeUnit.SECONDS.sleep(3);
-
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
+            if(!itWasntMe) {
+                //Stops the scrollbar automatically moving when the user messes with it
+                scrollPane.revalidate();
+                repaint();
+                System.out.println("Konichuwa!");
+                holdUp = true;
             }
         }
     }
 
-    private void movePane(){
-        //TODO Move pane after short amount of no scrollpane movement downwards. Use timers
-        TimerTask movePane = new TimerTask() {
-            @Override
-            public void run() {
-                while(true)
-                {
-                    pane.setCaretPosition(pane.getCaretPosition()+1); // Start at top when opening dialog
+
+    //Using thread so this can run on its own without stopping the rest of the program
+    //In a while loop so when the user messes with the scrollbar, it stops doing it and waits 10 seconds before restarting.
+    private class movePane extends Thread {
+            public void run(){
+                //Get the scrollbar because that's an invidual component for some reason
+                JScrollBar vertical = scrollPane.getVerticalScrollBar();
+                while (!holdUp) {
+                    //Move the scrollbar and tell the listener it was not the user.
+                    System.out.println(vertical.getValue());
+                    itWasntMe = true;
+                    vertical.setValue(vertical.getValue()+1);
+                    itWasntMe = false;
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(200);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
+                try {
+                    TimeUnit.SECONDS.sleep(10);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                holdUp = false;
+                movePane movePane = new movePane();
+                movePane.start();
             }
-        };
+        }
     }
-}
