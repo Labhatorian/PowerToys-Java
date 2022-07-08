@@ -69,7 +69,7 @@ public class App {
                 KeyEvent.VK_F2, 0));
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ev) {
-               //TODO Open dialog with version, logo and license
+               InfoDialog ID = new InfoDialog();
             }
         });
         menu.add(menuItem);
