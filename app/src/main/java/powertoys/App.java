@@ -3,12 +3,80 @@
  */
 package powertoys;
 
+import com.sun.tools.javac.Main;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+import java.net.URI;
+
+import static java.awt.Desktop.getDesktop;
+
 public class App {
-    public String getGreeting() {
-        return "Hello World!";
+    public static void main(String[] args) {
+        //TODO Add menubar with license and link to pag
+        JFrame window = new JFrame();
+        window.setTitle("PowerToys");
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setSize(500, 300);
+        window.setLocation(100, 100);
+
+        MainWindow MainWindow = new MainWindow(window);
+        window.add(MainWindow);
+
+        //Where the GUI is created:
+        JMenuBar menuBar;
+        JMenu menu;
+        JMenuItem menuItem;
+
+//Create the menu bar.
+        menuBar = new JMenuBar();
+
+//Build the first menu.
+        menu = new JMenu("Help");
+        menu.setMnemonic(KeyEvent.VK_A);
+        menu.getAccessibleContext().setAccessibleDescription(
+                "Important pages");
+        menuBar.add(menu);
+
+//a group of JMenuItems
+        menuItem = new JMenuItem("GitHub Page",
+                KeyEvent.VK_T);
+        menuItem.getAccessibleContext().setAccessibleDescription(
+                "Opens the GitHub page");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_F1, 0));
+        menuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    getDesktop().browse(URI.create("https://github.com/Labhatorian/PowerToys"));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        menu.add(menuItem);
+
+        menuItem = new JMenuItem("Version",
+                KeyEvent.VK_T);
+        menuItem.getAccessibleContext().setAccessibleDescription(
+                "Opens information about the project");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_F2, 0));
+        menuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ev) {
+               InfoDialog ID = new InfoDialog(window);
+            }
+        });
+        menu.add(menuItem);
+
+        window.setJMenuBar(menuBar);
+
+        window.setVisible(true);
     }
 
-    public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
-    }
 }

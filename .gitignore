@@ -21,8 +21,8 @@ hs_err_pid*
 
 ### Gradle ###
 .gradle
-/build/
-
+# Ignore Gradle build output directory
+build
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -33,7 +33,11 @@ gradle-app.setting
 # Cache of project
 .gradletasknamecache
 
+### IntellIJ ###
+.idea
+
 # # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
 # gradle/wrapper/gradle-wrapper.properties
 
 # End of https://www.gitignore.io/api/java,gradle
+
