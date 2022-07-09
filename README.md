@@ -1,7 +1,10 @@
 # PowerToys
+[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://github.com/Labhatorian/PowerToys/blob/main/LICENSE)
+
+
 > Java application with tools to help with specific tasks
 
-Currently in Alpha and private repository. Heading for milestone **1.0**!
+Currently in Alpha and in a private repository. Heading for milestone **1.0**!
 
 ## Features to be created
 - [ ] #1 File sorter based on filename
