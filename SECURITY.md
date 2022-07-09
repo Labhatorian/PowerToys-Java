@@ -1,10 +1,7 @@
 # Security Policy
 
 ## Supported Versions
-| Version | Supported          |
-| ------- | ------------------ |
-| x.x.x   | :x: Currently in Pre-Alpha|
-
+The latest version will be the supported version.
 
 ## Reporting a Vulnerability
 If you find a vulnerability in the program follow these steps:
