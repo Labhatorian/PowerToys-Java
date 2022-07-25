@@ -5,30 +5,23 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.stream.Stream;
-
-import static com.sun.java.accessibility.util.AWTEventMonitor.addWindowListener;
 
 public class FileRandomiser extends JPanel implements ActionListener {
     Button returnButton = new Button("Return");
     Button addFolder = new Button("Add folder");
     Button randomiseButton = new Button("Randomise");
+    Button crawlingButton = new Button("Crawl files");
     JTable includedFolders;
-    String[] columnNames = {"Included folder"};
     DefaultTableModel model = new DefaultTableModel(new Object[] { "Included Folders" }, 0);
     ArrayList<String> data = new ArrayList<>();
 
     JTable crawledFiles;
-    String[] columnNamesCF = {"Crawled files"};
     DefaultTableModel modelCF = new DefaultTableModel(new Object[] { "Crawled files" }, 0);
     ArrayList<String> dataCF = new ArrayList<>();
 
@@ -47,6 +40,9 @@ public class FileRandomiser extends JPanel implements ActionListener {
         add(addFolder);
         add(randomiseButton);
         randomiseButton.addActionListener(this);
+
+        add(crawlingButton);
+        crawlingButton.addActionListener(this);
 
         includedFolders = new JTable(model);
         JScrollPane scrollPane = new JScrollPane(includedFolders);
@@ -88,32 +84,40 @@ public class FileRandomiser extends JPanel implements ActionListener {
         if (actionEvent.getSource() == randomiseButton) {
             randomiseTime();
         }
+        if (actionEvent.getSource() == crawlingButton) {
+            crawlingTime();
+        }
+
     }
 
-    //TODO rename variables
-    //TODO move crawler to its own function
-    private void randomiseTime(){
-        ArrayList<String> dataCF = new ArrayList<>();
-        ArrayList<Path> allFiles2 = new ArrayList<>();
+    private void crawlingTime(){
+        //TODO For some reason this clears the variable after the function finishes. Results in doubling of data
+        //ArrayList<String> dataCF = new ArrayList<>();
+
+        //TODO Optimise so this variable becomes obsolete
+        ArrayList<Path> allFiles = new ArrayList<>();
         for (String path:data
-             ) {
+        ) {
             try {
-                Files.walk(Path.of(path)).filter(Files::isRegularFile).forEach(allFiles2::add);
+                //TODO Rewrite so user can see it crawling.
+                Files.walk(Path.of(path)).filter(Files::isRegularFile).forEach(allFiles::add);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            for (Path ongod:allFiles2
-                 ) {
-                System.out.println(ongod.toString());
-                dataCF.add(String.valueOf(ongod));
-                String[] fileToAdd = {String.valueOf(ongod)};
+            for (Path path2:allFiles
+            ) {
+                System.out.println(path2.toString());
+                dataCF.add(String.valueOf(path2));
+                String[] fileToAdd = {String.valueOf(path2)};
                 modelCF.addRow(fileToAdd);
                 crawledFiles.setModel(modelCF);
                 revalidate();
                 repaint();
             }
         }
+    }
 
+    private void randomiseTime(){
         //Now choose a random file to open
         Random rand = new Random();
         String randomElement = dataCF.get(rand.nextInt(dataCF.size()));
