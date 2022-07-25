@@ -1,7 +1,5 @@
 package powertoys;
 
-import org.checkerframework.checker.units.qual.A;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -12,11 +10,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//TODO This is supposed to be the file sorter. Oops!
-public class FileSorter extends JPanel implements ActionListener {
+public class FileRandomiser extends JPanel implements ActionListener {
     Button returnButton = new Button("Return");
     Button addFolder = new Button("Add folder");
     Button randomiseButton = new Button("Randomise");
@@ -26,14 +22,14 @@ public class FileSorter extends JPanel implements ActionListener {
     ArrayList<String> data = new ArrayList<>();
     JFrame app;
 
-    public FileSorter(JFrame app){
+    public FileRandomiser(JFrame app){
         this.app = app;
 
         setSize(500, 300);
         setLayout(new FlowLayout());
         add(returnButton);
         returnButton.addActionListener(this);
-        app.setTitle("PowerToys - FileSorter");
+        app.setTitle("PowerToys - FileRandomiser");
         addFolder.addActionListener(this);
         add(addFolder);
         add(randomiseButton);
