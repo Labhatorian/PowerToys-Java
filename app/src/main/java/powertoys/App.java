@@ -17,7 +17,21 @@ import static java.awt.Desktop.getDesktop;
 
 public class App {
     public static void main(String[] args) {
-        //TODO Add menubar with license and link to pag
+        try {
+            UIManager.setLookAndFeel(
+                    UIManager.getSystemLookAndFeelClassName());
+            UIManager.put("MenuItem.margin", new Insets(2, -15, 2, 2)); // Removes space to left of JMenuitems. For Windows
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+                 UnsupportedLookAndFeelException e) {
+            //Fallback to Metal
+            try {
+                UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+                     UnsupportedLookAndFeelException ex) {
+                //You have bigger problems
+                throw new RuntimeException(ex);
+            }
+        }
         JFrame window = new JFrame();
         window.setTitle("PowerToys");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

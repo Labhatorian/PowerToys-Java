@@ -1,28 +1,33 @@
 # PowerToys
+[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://github.com/Labhatorian/PowerToys/blob/main/LICENSE)
+
+
 > Java application with tools to help with specific tasks
 
-Currently in Alpha and private repository. Heading for milestone **1.0**!
+Currently in Alpha and in a private repository. Heading for milestone **1.0**!
 
 ## Features to be created
-- [ ] #1 File sorter based on filename
-- [ ] #2 Random file chooser that is flexible to use
+- [ ] #1 File sorter
+- [ ] #2 Random file chooser *(Currently worked on)*
 - [ ] #3 File unsorter
 
-## Ideas
-### General
-An idea to help with optimalisation is to have the interface be in Java and run the features from Python scripts.
-First we'd have to check if that is possible and what upsides and downsides there are doing it this way.
-
+## How it works
 ### #1 File sorter
-Based on https://github.com/Labhatorian/file-sorter-python
-Use a library to compare filename to foldername. Allow for ignored characters and words.
-Another idea is to do it based on tags from sites i.e. use [AniList](https://anilist.co/) to find similiar tags or even the series it belongs to
+Based on https://github.com/Labhatorian/file-sorter-python <br>
+Use a library to compare filename to foldername. Allow for ignored characters and words. Save the new paths of the files to be used by the file unsorter.
+<br><br>An idea is to do it based on tags from sites i.e. use [AniList](https://anilist.co/) to find similiar tags or even the series it belongs to.
+This had to be a dynamic feature so you can easily add new sites. 
 
 ### #2 Random file chooser
-Based on an unpublished Python script in hands of @Labhatorian
-Crawl directories with chosen roots. Then create a list to be cached and choose a random file to open. Allow for ignored characters, words and files.
-Possible idea is to keep track of opened (supported) programs to continue choosing another file.
+Crawl directories, add them to a list and then have a button to randomise. Give an option to keep track of the opened program to
+open the next randomised file after opening. <br>
+Allow for ignored files and directories. Make the user be able to save the lists for later use.
+Mainly so the user does not have to crawl every time if nothing has changed, though Java seems to optimise by caching the crawled files on its own.
 
 ### #3 File unsorter
-Use a `json` or just a `txt` file to put everything back that has been done by the file sorter.
-Possible allow a nuclear option.
+Use a `json` or just a `txt` file to put everything back that has been done by the file sorter. 
+<br> Nuclear option available<br><br>
+Might get merged with **#1 File sorter**
+### #4 File renamer *(Being considered)*
+Using the extensions from the file sorter. Make it rename the files to have the tags, artist, season, episode etc.
+<br> Great for data hoarders to easily rename and then sort files based on existing data on the web.
