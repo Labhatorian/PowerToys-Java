@@ -128,31 +128,20 @@ public class FileRandomiser extends JPanel implements ActionListener {
     }
 
     private void crawlingTime(){
-        final Path[] object = {null};
-        
         dataCF.clear();
         modelCF.setRowCount(0);
-
-        Runnable myrunnable = new Runnable() {
-            public void run() {
-                addFile(crawledFiles, modelCF, dataCF, object[0]);;//Call your function
-
-            }
-        };
         
         for (String path:data
         ) {
             try {
                 Files.walk(Path.of(path)).filter(Files::isRegularFile).forEach(add ->{
                     System.out.println(add.toString());
-                    object[0] = add;
-                    Thread thread = new Thread(myrunnable);
-                    thread.start();
-                    try {
-                        thread.join();
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                    dataCF.add(String.valueOf(add));
+                    String[] fileToAdd = {String.valueOf(add)};
+                    modelCF.addRow(fileToAdd);
+                    crawledFiles.setModel(modelCF);
+                    revalidate();
+                    repaint();
                 });
 
             } catch (IOException e) {
@@ -181,14 +170,5 @@ public class FileRandomiser extends JPanel implements ActionListener {
                 JOptionPane.showMessageDialog(app, e.getMessage(), "Powertoys: Something went wrong opening the file!", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }
-
-    private void addFile(JTable table, DefaultTableModel model, ArrayList<String> data, Object add){
-        data.add(String.valueOf(add));
-        String[] fileToAdd = {String.valueOf(add)};
-        model.addRow(fileToAdd);
-        table.setModel(model);
-        revalidate();
-        repaint();
     }
 }
