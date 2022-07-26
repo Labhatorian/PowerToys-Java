@@ -17,6 +17,7 @@ public class FileRandomiser extends JPanel implements ActionListener {
     Button addFolder = new Button("Add folder");
     Button randomiseButton = new Button("Randomise");
     Button crawlingButton = new Button("Crawl files");
+    Button ignoreButton = new Button("Ignore file/folder");
     JTable includedFolders;
     DefaultTableModel model = new DefaultTableModel(new Object[] { "Included Folders" }, 0);
     ArrayList<String> data = new ArrayList<>();
@@ -25,24 +26,34 @@ public class FileRandomiser extends JPanel implements ActionListener {
     DefaultTableModel modelCF = new DefaultTableModel(new Object[] { "Crawled files" }, 0);
     ArrayList<String> dataCF = new ArrayList<>();
 
+    JTable ignoredFilesFolders;
+    DefaultTableModel modelI = new DefaultTableModel(new Object[] { "Ignored" }, 0);
+    ArrayList<String> dataI = new ArrayList<>();
+
     JFrame app;
 
     public FileRandomiser(JFrame app){
         this.app = app;
 
         setSize(800, 300);
-        app.setSize(1200, 500);
+        app.setSize(1400, 1000);
         setLayout(new FlowLayout());
+        app.setTitle("PowerToys - FileRandomiser");
+
         add(returnButton);
         returnButton.addActionListener(this);
-        app.setTitle("PowerToys - FileRandomiser");
-        addFolder.addActionListener(this);
+
         add(addFolder);
+        addFolder.addActionListener(this);
+
         add(randomiseButton);
         randomiseButton.addActionListener(this);
 
         add(crawlingButton);
         crawlingButton.addActionListener(this);
+
+        add(ignoreButton);
+        ignoreButton.addActionListener(this);
 
         includedFolders = new JTable(model);
         JScrollPane scrollPane = new JScrollPane(includedFolders);
@@ -50,9 +61,14 @@ public class FileRandomiser extends JPanel implements ActionListener {
         add(scrollPane);
 
         crawledFiles = new JTable(modelCF);
-        JScrollPane scrollPane2 = new JScrollPane(crawledFiles );
+        JScrollPane scrollPane2 = new JScrollPane(crawledFiles);
         crawledFiles .setFillsViewportHeight(true);
         add(scrollPane2);
+
+        ignoredFilesFolders = new JTable(modelI);
+        JScrollPane scrollPane3 = new JScrollPane(ignoredFilesFolders);
+        ignoredFilesFolders .setFillsViewportHeight(true);
+        add(scrollPane3);
 
         setVisible(true);
     }
@@ -85,32 +101,62 @@ public class FileRandomiser extends JPanel implements ActionListener {
             randomiseTime();
         }
         if (actionEvent.getSource() == crawlingButton) {
-            crawlingTime();
+
+            Runnable myrunnable = new Runnable() {
+                public void run() {
+                    crawlingTime();
+                }
+            };
+
+            new Thread(myrunnable).start();
         }
 
+        if (actionEvent.getSource() == ignoreButton) {
+            JFileChooser fc = new JFileChooser();
+            fc.setCurrentDirectory(new java.io.File(".")); // start at application current directory
+            fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            int returnVal = fc.showSaveDialog(this);
+            if(returnVal == JFileChooser.APPROVE_OPTION) {
+                File yourFolder = fc.getSelectedFile();
+                dataI.add(yourFolder.getPath());
+                modelI.addRow(dataI.toArray());
+                ignoredFilesFolders.setModel(modelI);
+                revalidate();
+                repaint();
+            }
+        }
     }
 
     private void crawlingTime(){
+        final Path[] object = {null};
+        
         dataCF.clear();
         modelCF.setRowCount(0);
 
-        ArrayList<Path> allFiles = new ArrayList<>();
+        Runnable myrunnable = new Runnable() {
+            public void run() {
+                addFile(crawledFiles, modelCF, dataCF, object[0]);;//Call your function
+
+            }
+        };
+        
         for (String path:data
         ) {
             try {
-                Files.walk(Path.of(path)).filter(Files::isRegularFile).forEach(allFiles::add);
+                Files.walk(Path.of(path)).filter(Files::isRegularFile).forEach(add ->{
+                    System.out.println(add.toString());
+                    object[0] = add;
+                    Thread thread = new Thread(myrunnable);
+                    thread.start();
+                    try {
+                        thread.join();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
             } catch (IOException e) {
                 throw new RuntimeException(e);
-            }
-            for (Path path2:allFiles
-            ) {
-                System.out.println(path2.toString());
-                dataCF.add(String.valueOf(path2));
-                String[] fileToAdd = {String.valueOf(path2)};
-                modelCF.addRow(fileToAdd);
-                crawledFiles.setModel(modelCF);
-                revalidate();
-                repaint();
             }
         }
     }
@@ -135,5 +181,14 @@ public class FileRandomiser extends JPanel implements ActionListener {
                 JOptionPane.showMessageDialog(app, e.getMessage(), "Powertoys: Something went wrong opening the file!", JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+
+    private void addFile(JTable table, DefaultTableModel model, ArrayList<String> data, Object add){
+        data.add(String.valueOf(add));
+        String[] fileToAdd = {String.valueOf(add)};
+        model.addRow(fileToAdd);
+        table.setModel(model);
+        revalidate();
+        repaint();
     }
 }
