@@ -61,7 +61,7 @@ public class FileRandomiser extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource() == returnButton) {
             MainWindow mainWindow = new MainWindow(app);
-            app.setSize(500, 300); // return size back
+            app.setSize(520, 300); // return size back
             app.remove(this);
             app.add(mainWindow);
             app.revalidate();
@@ -91,15 +91,13 @@ public class FileRandomiser extends JPanel implements ActionListener {
     }
 
     private void crawlingTime(){
-        //TODO For some reason this clears the variable after the function finishes. Results in doubling of data
-        //ArrayList<String> dataCF = new ArrayList<>();
+        dataCF.clear();
+        modelCF.setRowCount(0);
 
-        //TODO Optimise so this variable becomes obsolete
         ArrayList<Path> allFiles = new ArrayList<>();
         for (String path:data
         ) {
             try {
-                //TODO Rewrite so user can see it crawling.
                 Files.walk(Path.of(path)).filter(Files::isRegularFile).forEach(allFiles::add);
             } catch (IOException e) {
                 throw new RuntimeException(e);
