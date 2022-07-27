@@ -112,12 +112,12 @@ public class FileRandomiser extends JPanel implements ActionListener {
         }
 
         if (actionEvent.getSource() == ignoreButton) {
-            JFileChooser fc = new JFileChooser();
-            fc.setCurrentDirectory(new java.io.File(".")); // start at application current directory
-            fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            int returnVal = fc.showSaveDialog(this);
+            JFileChooser fc2 = new JFileChooser();
+            fc2.setCurrentDirectory(new java.io.File(".")); // start at application current directory
+            fc2.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            int returnVal = fc2.showSaveDialog(this);
             if(returnVal == JFileChooser.APPROVE_OPTION) {
-                File yourFolder = fc.getSelectedFile();
+                File yourFolder = fc2.getSelectedFile();
                 dataI.add(yourFolder.getPath());
                 modelI.addRow(dataI.toArray());
                 ignoredFilesFolders.setModel(modelI);
@@ -136,12 +136,18 @@ public class FileRandomiser extends JPanel implements ActionListener {
             try {
                 Files.walk(Path.of(path)).filter(Files::isRegularFile).forEach(add ->{
                     System.out.println(add.toString());
-                    dataCF.add(String.valueOf(add));
-                    String[] fileToAdd = {String.valueOf(add)};
-                    modelCF.addRow(fileToAdd);
-                    crawledFiles.setModel(modelCF);
-                    revalidate();
-                    repaint();
+
+                    for (String ignorePath:dataI
+                         ) {
+                        if(!add.toString().contains(ignorePath)){
+                            dataCF.add(String.valueOf(add));
+                            String[] fileToAdd = {String.valueOf(add)};
+                            modelCF.addRow(fileToAdd);
+                            crawledFiles.setModel(modelCF);
+                            revalidate();
+                            repaint();
+                        }
+                    }
                 });
 
             } catch (IOException e) {
