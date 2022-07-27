@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 
 public class FileRandomiser extends JPanel implements ActionListener {
     Button returnButton = new Button("Return");
@@ -18,6 +19,7 @@ public class FileRandomiser extends JPanel implements ActionListener {
     Button randomiseButton = new Button("Randomise");
     Button crawlingButton = new Button("Crawl files");
     Button ignoreButton = new Button("Ignore file/folder");
+    JRadioButton continousRandomisationButton = new JRadioButton("Continous randomisation");
     JTable includedFolders;
     DefaultTableModel model = new DefaultTableModel(new Object[] { "Included Folders" }, 0);
     ArrayList<String> data = new ArrayList<>();
@@ -35,7 +37,7 @@ public class FileRandomiser extends JPanel implements ActionListener {
     public FileRandomiser(JFrame app){
         this.app = app;
 
-        setSize(800, 300);
+        setSize(850, 300);
         app.setSize(1400, 1000);
         setLayout(new FlowLayout());
         app.setTitle("PowerToys - FileRandomiser");
@@ -48,6 +50,8 @@ public class FileRandomiser extends JPanel implements ActionListener {
 
         add(randomiseButton);
         randomiseButton.addActionListener(this);
+
+        add(continousRandomisationButton);
 
         add(crawlingButton);
         crawlingButton.addActionListener(this);
@@ -168,6 +172,26 @@ public class FileRandomiser extends JPanel implements ActionListener {
             return;
         }
 
+        //TODO make function of
+        //Find what programs are running prior
+        if(continousRandomisationButton.isSelected()){
+            try {
+                Process process = new ProcessBuilder("powershell","\"gps| ? {$_.mainwindowtitle.length -ne 0} | Format-Table -HideTableHeaders  name, ID").start();
+                new Thread(() -> {
+                    Scanner sc = new Scanner(process.getInputStream());
+                    if (sc.hasNextLine()) sc.nextLine();
+                    while (sc.hasNextLine()) {
+                        String line = sc.nextLine();
+                        System.out.println(line);
+                    }
+                }).start();
+                process.waitFor();
+                System.out.println("Done");
+            } catch (Exception e){
+                JOptionPane.showMessageDialog(app, e.getMessage(), "Powertoys: Something went wrong!", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
         Desktop desktop = Desktop.getDesktop();
         if(file.exists()) {
             try {
@@ -176,5 +200,26 @@ public class FileRandomiser extends JPanel implements ActionListener {
                 JOptionPane.showMessageDialog(app, e.getMessage(), "Powertoys: Something went wrong opening the file!", JOptionPane.ERROR_MESSAGE);
             }
         }
+
+        //Find what program is running now after opening
+        if(continousRandomisationButton.isSelected()){
+            try {
+                Process process = new ProcessBuilder("powershell","\"gps| ? {$_.mainwindowtitle.length -ne 0} | Format-Table -HideTableHeaders  name, ID").start();
+                new Thread(() -> {
+                    Scanner sc = new Scanner(process.getInputStream());
+                    if (sc.hasNextLine()) sc.nextLine();
+                    while (sc.hasNextLine()) {
+                        String line = sc.nextLine();
+                        System.out.println(line);
+                    }
+                }).start();
+                process.waitFor();
+                System.out.println("Done");
+            } catch (Exception e){
+                JOptionPane.showMessageDialog(app, e.getMessage(), "Powertoys: Something went wrong!", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        //While program is open, check periodically if it is still open. Use thread so it won't keep the Java application hostage
     }
 }
