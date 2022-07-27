@@ -141,17 +141,28 @@ public class FileRandomiser extends JPanel implements ActionListener {
                 Files.walk(Path.of(path)).filter(Files::isRegularFile).forEach(add ->{
                     System.out.println(add.toString());
 
-                    for (String ignorePath:dataI
-                         ) {
-                        if(!add.toString().contains(ignorePath)){
-                            dataCF.add(String.valueOf(add));
-                            String[] fileToAdd = {String.valueOf(add)};
-                            modelCF.addRow(fileToAdd);
-                            crawledFiles.setModel(modelCF);
-                            revalidate();
-                            repaint();
+                    //TODO Make function out of adding data
+                    if(dataI.size() != 0){
+                        for (String ignorePath:dataI
+                        ) {
+                            if(!add.toString().contains(ignorePath)){
+                                dataCF.add(String.valueOf(add));
+                                String[] fileToAdd = {String.valueOf(add)};
+                                modelCF.addRow(fileToAdd);
+                                crawledFiles.setModel(modelCF);
+                                revalidate();
+                                repaint();
+                            }
                         }
+                    } else {
+                        dataCF.add(String.valueOf(add));
+                        String[] fileToAdd = {String.valueOf(add)};
+                        modelCF.addRow(fileToAdd);
+                        crawledFiles.setModel(modelCF);
+                        revalidate();
+                        repaint();
                     }
+
                 });
 
             } catch (IOException e) {
