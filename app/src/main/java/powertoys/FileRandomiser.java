@@ -91,6 +91,7 @@ public class FileRandomiser extends JPanel implements ActionListener {
             JFileChooser fc = new JFileChooser();
             fc.setCurrentDirectory(new java.io.File(".")); // start at application current directory
             fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            fc.setDialogTitle("Add folder");
             int returnVal = fc.showSaveDialog(this);
             if(returnVal == JFileChooser.APPROVE_OPTION) {
                 File yourFolder = fc.getSelectedFile();
@@ -118,6 +119,7 @@ public class FileRandomiser extends JPanel implements ActionListener {
         if (actionEvent.getSource() == ignoreButton) {
             JFileChooser fc2 = new JFileChooser();
             fc2.setCurrentDirectory(new java.io.File(".")); // start at application current directory
+            fc2.setDialogTitle("Ignore file/folder");
             fc2.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
             int returnVal = fc2.showSaveDialog(this);
             if(returnVal == JFileChooser.APPROVE_OPTION) {
@@ -201,44 +203,45 @@ public class FileRandomiser extends JPanel implements ActionListener {
 
         boolean processTargetFound = false;
 
-        for (String processB:processBefore
+        for (String processA:processAfter
         ) {
-            for (String processA:processAfter
+            for (String processB:processBefore
             ) {
-                if(processB.equals(processA)){
+                if(processA.equals(processB)){
                     //There is one, nothing wrong
                     processTargetFound = true;
                     break;
                 }
             }
             if(!processTargetFound){
-                processTarget = processB;
+                processTarget = processA;
+                break;
             } else {
                 processTargetFound = false;
             }
         }
 
         String finalProcessTarget = processTarget;
+
         new Thread(() -> {
         //Find what program is running now after opening
         ArrayList<String> processBefore2 = new ArrayList<>();
         ArrayList<String> processAfter2 = new ArrayList<>();
 
         if (continousRandomisationButton.isSelected()) {
-            findProcesses(processBefore2);
             boolean programOpen = true;
 
             while (programOpen) {
                 processAfter2.clear();
                 if (continousRandomisationButton.isSelected()) {
                         findProcesses(processAfter2);
-                    //TODO Rewrite to find the string we are looking for and not find the odd one out.
 
-                    for (String processSeek:processBefore2
+                    for (String processSeek:processAfter2
                          ) {
+                        programOpen = false;
                         if (processSeek.equals(finalProcessTarget)) {
                             //There is one, nothing wrong
-                            programOpen = false;
+                            programOpen = true;
                             break;
                         }
                     }
@@ -246,7 +249,7 @@ public class FileRandomiser extends JPanel implements ActionListener {
                     //Are you still there?
                     synchronized (this){
                         try{
-                            this.wait(1000);
+                            this.wait(2000);
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
@@ -259,6 +262,7 @@ public class FileRandomiser extends JPanel implements ActionListener {
             }
         }
         }).start();
+
     }
 
     private void findProcesses(ArrayList<String> processArray){
@@ -269,8 +273,10 @@ public class FileRandomiser extends JPanel implements ActionListener {
             if (sc.hasNextLine()) sc.nextLine();
             while (sc.hasNextLine()) {
                 String line = sc.nextLine();
-                processArray.add(line);
-                System.out.println(line);
+                if (!line.equals("")) {
+                    processArray.add(line);
+                    System.out.println(line);
+                }
             }
         } catch (IOException e) {
             JOptionPane.showMessageDialog(app, e.getMessage(), "Powertoys: Something went wrong!", JOptionPane.ERROR_MESSAGE);
