@@ -172,6 +172,12 @@ public class FileRandomiser extends JPanel implements ActionListener {
     }
 
     private void randomiseTime() {
+        ArrayList<String> processBefore = new ArrayList<>();
+        ArrayList<String> processAfter = new ArrayList<>();
+        String processTarget = null;
+
+        findProcesses(processBefore);
+
         //Now choose a random file to open
         Random rand = new Random();
         String randomElement = dataCF.get(rand.nextInt(dataCF.size()));
@@ -191,36 +197,49 @@ public class FileRandomiser extends JPanel implements ActionListener {
                 JOptionPane.showMessageDialog(app, e.getMessage(), "Powertoys: Something went wrong opening the file!", JOptionPane.ERROR_MESSAGE);
             }
         }
+        findProcesses(processAfter);
 
+        boolean processTargetFound = false;
+
+        for (String processB:processBefore
+        ) {
+            for (String processA:processAfter
+            ) {
+                if(processB.equals(processA)){
+                    //There is one, nothing wrong
+                    processTargetFound = true;
+                    break;
+                }
+            }
+            if(!processTargetFound){
+                processTarget = processB;
+            } else {
+                processTargetFound = false;
+            }
+        }
+
+        String finalProcessTarget = processTarget;
         new Thread(() -> {
         //Find what program is running now after opening
-        ArrayList<String> processBefore = new ArrayList<>();
-        ArrayList<String> processAfter = new ArrayList<>();
+        ArrayList<String> processBefore2 = new ArrayList<>();
+        ArrayList<String> processAfter2 = new ArrayList<>();
 
         if (continousRandomisationButton.isSelected()) {
-            findProcesses(processBefore);
+            findProcesses(processBefore2);
             boolean programOpen = true;
 
             while (programOpen) {
-                processAfter.clear();
+                processAfter2.clear();
                 if (continousRandomisationButton.isSelected()) {
-                        findProcesses(processAfter);
+                        findProcesses(processAfter2);
                     //TODO Rewrite to find the string we are looking for and not find the odd one out.
-                    boolean processFound = false;
-                    for (String processB:processBefore
-                    ) {
-                        for (String processA:processAfter
-                        ) {
-                            if(processB.equals(processA)){
-                                //There is one, nothing wrong
-                                processFound = true;
-                                break;
-                            }
-                        }
-                        if(!processFound){
+
+                    for (String processSeek:processBefore2
+                         ) {
+                        if (processSeek.equals(finalProcessTarget)) {
+                            //There is one, nothing wrong
                             programOpen = false;
-                        } else {
-                            processFound = false;
+                            break;
                         }
                     }
 
