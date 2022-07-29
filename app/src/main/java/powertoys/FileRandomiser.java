@@ -198,41 +198,14 @@ public class FileRandomiser extends JPanel implements ActionListener {
         ArrayList<String> processAfter = new ArrayList<>();
 
         if (continousRandomisationButton.isSelected()) {
-            try {
-                //TODO make function of
-                Process process = new ProcessBuilder("powershell", "\"gps| ? {$_.mainwindowtitle.length -ne 0} | Format-Table -HideTableHeaders  name, ID").start();
-                    Scanner sc = new Scanner(process.getInputStream());
-                    if (sc.hasNextLine()) sc.nextLine();
-                    while (sc.hasNextLine()) {
-                        String line = sc.nextLine();
-                        processBefore.add(line);
-                        System.out.println(line);
-                    }
-                System.out.println("Done");
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(app, e.getMessage(), "Powertoys: Something went wrong!", JOptionPane.ERROR_MESSAGE);
-            }
-
+            findProcesses(processBefore);
             boolean programOpen = true;
+
             while (programOpen) {
                 processAfter.clear();
-
-                //Find process
                 if (continousRandomisationButton.isSelected()) {
-                    try {
-                        Process process = new ProcessBuilder("powershell", "\"gps| ? {$_.mainwindowtitle.length -ne 0} | Format-Table -HideTableHeaders  name, ID").start();
-                            Scanner sc = new Scanner(process.getInputStream());
-                            if (sc.hasNextLine()) sc.nextLine();
-                            while (sc.hasNextLine()) {
-                                String line = sc.nextLine();
-                                processAfter.add(line);
-                                System.out.println(line);
-                            }
-                        System.out.println("Done");
-                    } catch (Exception e) {
-                        JOptionPane.showMessageDialog(app, e.getMessage(), "Powertoys: Something went wrong!", JOptionPane.ERROR_MESSAGE);
-                    }
-
+                        findProcesses(processAfter);
+                    //TODO Rewrite to find the string we are looking for and not find the odd one out.
                     boolean processFound = false;
                     for (String processB:processBefore
                     ) {
@@ -261,11 +234,28 @@ public class FileRandomiser extends JPanel implements ActionListener {
                     }
                 }
             }
-            //Still selected? Continue random
+            //Still selected? Continue randomising
             if (continousRandomisationButton.isSelected()) {
                 randomiseTime();
             }
         }
         }).start();
+    }
+
+    private void findProcesses(ArrayList<String> processArray){
+        Process process;
+        try {
+            process = new ProcessBuilder("powershell", "\"gps| ? {$_.mainwindowtitle.length -ne 0} | Format-Table -HideTableHeaders  name, ID").start();
+            Scanner sc = new Scanner(process.getInputStream());
+            if (sc.hasNextLine()) sc.nextLine();
+            while (sc.hasNextLine()) {
+                String line = sc.nextLine();
+                processArray.add(line);
+                System.out.println(line);
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(app, e.getMessage(), "Powertoys: Something went wrong!", JOptionPane.ERROR_MESSAGE);
+        }
+        System.out.println("Done");
     }
 }
