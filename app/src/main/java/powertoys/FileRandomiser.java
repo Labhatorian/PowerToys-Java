@@ -185,23 +185,24 @@ public class FileRandomiser extends JPanel implements ActionListener {
 
         //TODO make function of
         //Find what programs are running prior
-        if (continousRandomisationButton.isSelected()) {
-            try {
-                Process process = new ProcessBuilder("powershell", "\"gps| ? {$_.mainwindowtitle.length -ne 0} | Format-Table -HideTableHeaders  name, ID").start();
-                new Thread(() -> {
-                    Scanner sc = new Scanner(process.getInputStream());
-                    if (sc.hasNextLine()) sc.nextLine();
-                    while (sc.hasNextLine()) {
-                        String line = sc.nextLine();
-                        System.out.println(line);
-                    }
-                }).start();
-                process.waitFor();
-                System.out.println("Done");
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(app, e.getMessage(), "Powertoys: Something went wrong!", JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        //TODO unneeded?
+//        if (continousRandomisationButton.isSelected()) {
+//            try {
+//                Process process = new ProcessBuilder("powershell", "\"gps| ? {$_.mainwindowtitle.length -ne 0} | Format-Table -HideTableHeaders  name, ID").start();
+//                new Thread(() -> {
+//                    Scanner sc = new Scanner(process.getInputStream());
+//                    if (sc.hasNextLine()) sc.nextLine();
+//                    while (sc.hasNextLine()) {
+//                        String line = sc.nextLine();
+//                        System.out.println(line);
+//                    }
+//                }).start();
+//                process.waitFor();
+//                System.out.println("Done");
+//            } catch (Exception e) {
+//                JOptionPane.showMessageDialog(app, e.getMessage(), "Powertoys: Something went wrong!", JOptionPane.ERROR_MESSAGE);
+//            }
+//        }
 
         Desktop desktop = Desktop.getDesktop();
         if (file.exists()) {
@@ -213,6 +214,9 @@ public class FileRandomiser extends JPanel implements ActionListener {
         }
 
         //Find what program is running now after opening
+        ArrayList<String> processBefore = new ArrayList<>();
+        ArrayList<String> processAfter = new ArrayList<>();
+
         if (continousRandomisationButton.isSelected()) {
             try {
                 Process process = new ProcessBuilder("powershell", "\"gps| ? {$_.mainwindowtitle.length -ne 0} | Format-Table -HideTableHeaders  name, ID").start();
@@ -221,6 +225,7 @@ public class FileRandomiser extends JPanel implements ActionListener {
                     if (sc.hasNextLine()) sc.nextLine();
                     while (sc.hasNextLine()) {
                         String line = sc.nextLine();
+                        processBefore.add(line);
                         System.out.println(line);
                     }
                 }).start();
@@ -233,6 +238,8 @@ public class FileRandomiser extends JPanel implements ActionListener {
             //TODO While program is open, check periodically if it is still open. Use thread so it won't keep the Java application hostage
             boolean programOpen = true;
             while (programOpen) {
+                processAfter.clear();
+
                 //Find process
                 if (continousRandomisationButton.isSelected()) {
                     try {
@@ -242,6 +249,7 @@ public class FileRandomiser extends JPanel implements ActionListener {
                             if (sc.hasNextLine()) sc.nextLine();
                             while (sc.hasNextLine()) {
                                 String line = sc.nextLine();
+                                processAfter.add(line);
                                 System.out.println(line);
                             }
                         }).start();
@@ -249,6 +257,23 @@ public class FileRandomiser extends JPanel implements ActionListener {
                         System.out.println("Done");
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(app, e.getMessage(), "Powertoys: Something went wrong!", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                    boolean processFound = false;
+                    for (String processA:processAfter
+                    ) {
+                        for (String processB:processBefore
+                        ) {
+                            if(processA.equals(processB)){
+                                //There is one, nothing wrong
+                                processFound = true;
+                            }
+                        }
+                        if(!processFound){
+                            programOpen = false;
+                        } else {
+                            processFound = false;
+                        }
                     }
 
                     //Are you still there?
