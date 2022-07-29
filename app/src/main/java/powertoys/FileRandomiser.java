@@ -183,27 +183,6 @@ public class FileRandomiser extends JPanel implements ActionListener {
             return;
         }
 
-        //TODO make function of
-        //Find what programs are running prior
-        //TODO unneeded?
-//        if (continousRandomisationButton.isSelected()) {
-//            try {
-//                Process process = new ProcessBuilder("powershell", "\"gps| ? {$_.mainwindowtitle.length -ne 0} | Format-Table -HideTableHeaders  name, ID").start();
-//                new Thread(() -> {
-//                    Scanner sc = new Scanner(process.getInputStream());
-//                    if (sc.hasNextLine()) sc.nextLine();
-//                    while (sc.hasNextLine()) {
-//                        String line = sc.nextLine();
-//                        System.out.println(line);
-//                    }
-//                }).start();
-//                process.waitFor();
-//                System.out.println("Done");
-//            } catch (Exception e) {
-//                JOptionPane.showMessageDialog(app, e.getMessage(), "Powertoys: Something went wrong!", JOptionPane.ERROR_MESSAGE);
-//            }
-//        }
-
         Desktop desktop = Desktop.getDesktop();
         if (file.exists()) {
             try {
@@ -213,14 +192,15 @@ public class FileRandomiser extends JPanel implements ActionListener {
             }
         }
 
+        new Thread(() -> {
         //Find what program is running now after opening
         ArrayList<String> processBefore = new ArrayList<>();
         ArrayList<String> processAfter = new ArrayList<>();
 
         if (continousRandomisationButton.isSelected()) {
             try {
+                //TODO make function of
                 Process process = new ProcessBuilder("powershell", "\"gps| ? {$_.mainwindowtitle.length -ne 0} | Format-Table -HideTableHeaders  name, ID").start();
-                new Thread(() -> {
                     Scanner sc = new Scanner(process.getInputStream());
                     if (sc.hasNextLine()) sc.nextLine();
                     while (sc.hasNextLine()) {
@@ -228,14 +208,11 @@ public class FileRandomiser extends JPanel implements ActionListener {
                         processBefore.add(line);
                         System.out.println(line);
                     }
-                }).start();
-                process.waitFor();
                 System.out.println("Done");
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(app, e.getMessage(), "Powertoys: Something went wrong!", JOptionPane.ERROR_MESSAGE);
             }
 
-            //TODO While program is open, check periodically if it is still open. Use thread so it won't keep the Java application hostage
             boolean programOpen = true;
             while (programOpen) {
                 processAfter.clear();
@@ -244,7 +221,6 @@ public class FileRandomiser extends JPanel implements ActionListener {
                 if (continousRandomisationButton.isSelected()) {
                     try {
                         Process process = new ProcessBuilder("powershell", "\"gps| ? {$_.mainwindowtitle.length -ne 0} | Format-Table -HideTableHeaders  name, ID").start();
-                        new Thread(() -> {
                             Scanner sc = new Scanner(process.getInputStream());
                             if (sc.hasNextLine()) sc.nextLine();
                             while (sc.hasNextLine()) {
@@ -252,21 +228,20 @@ public class FileRandomiser extends JPanel implements ActionListener {
                                 processAfter.add(line);
                                 System.out.println(line);
                             }
-                        }).start();
-                        process.waitFor();
                         System.out.println("Done");
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(app, e.getMessage(), "Powertoys: Something went wrong!", JOptionPane.ERROR_MESSAGE);
                     }
 
                     boolean processFound = false;
-                    for (String processA:processAfter
+                    for (String processB:processBefore
                     ) {
-                        for (String processB:processBefore
+                        for (String processA:processAfter
                         ) {
-                            if(processA.equals(processB)){
+                            if(processB.equals(processA)){
                                 //There is one, nothing wrong
                                 processFound = true;
+                                break;
                             }
                         }
                         if(!processFound){
@@ -277,17 +252,20 @@ public class FileRandomiser extends JPanel implements ActionListener {
                     }
 
                     //Are you still there?
-                    try {
-                        wait(1000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
+                    synchronized (this){
+                        try{
+                            this.wait(1000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
-                //Still selected? Continue random
-                if (continousRandomisationButton.isSelected()) {
-                    randomiseTime();
-                }
+            }
+            //Still selected? Continue random
+            if (continousRandomisationButton.isSelected()) {
+                randomiseTime();
             }
         }
+        }).start();
     }
 }
