@@ -1,6 +1,7 @@
 # PowerToys
 [![GPLv3 License](https://img.shields.io/badge/License-GPL%20v3-yellow.svg)](https://github.com/Labhatorian/PowerToys/blob/main/LICENSE)
 
+NEW PROJECT, MOVED TO -> https://github.com/Labhatorian/PowerToys
 
 > Java application with tools to help with specific tasks
 
